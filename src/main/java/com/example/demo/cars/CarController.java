@@ -1,6 +1,7 @@
 package com.example.demo.cars;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,32 +18,40 @@ public class CarController {
         this.carService = carService;
     }
 
-    @GetMapping(path = "{carId}")
-    public Optional<Car> findCar(@PathVariable("carId") Long carId) {
-         return carService.findCar(carId);
-    }
-
     @GetMapping
-    public List<Car> getCars() {
+    public List<Car> getAllCars() {
         return carService.getCars();
     }
 
+    @GetMapping("/{carId}")
+    public ResponseEntity<Car> getCarById(@PathVariable Long carId) {
+        Optional<Car> car = carService.findCar(carId);
+        return car.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @PostMapping
-    public void registerNewCar(@RequestBody Car car) {
+    public void addCar(@RequestBody Car car) {
         carService.addNewCar(car);
     }
 
-    @DeleteMapping(path = "{carId}")
-    public void deleteCar(@PathVariable("carId") Long carId) {
-        carService.deleteCar(carId);
+    @PutMapping("/{carId}")
+    public ResponseEntity<Object> updateCar(@PathVariable Long carId, @RequestBody Car updatedCar) {
+        try {
+            carService.updateCar(carId, updatedCar);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @PutMapping(path = "{carId}")
-    public void updateCar(
-            @PathVariable("carId") Long carId,
-            @RequestParam(required = false) String make,
-            @RequestParam(required = false) String model) {
-        carService.updateCar(carId, make, model);
+    @DeleteMapping("/{carId}")
+    public ResponseEntity<Object> deleteCar(@PathVariable Long carId) {
+        try {
+            carService.deleteCar(carId);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
-
 }

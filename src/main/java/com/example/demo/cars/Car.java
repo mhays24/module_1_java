@@ -1,6 +1,10 @@
 package com.example.demo.cars;
 
 import jakarta.persistence.*;
+import com.example.demo.Dealership.Dealership;
+import com.example.demo.Driver.Driver;
+
+import java.util.Set;
 
 @Entity
 @Table
@@ -21,6 +25,13 @@ public class Car {
     private String model;
     private String year;
     private String color;
+
+    @ManyToMany(mappedBy = "cars")
+    private Set<Driver> drivers;
+
+    @ManyToOne
+    @JoinColumn(name = "dealership_id")
+    private Dealership dealership;
 
     public Car() {
     }
@@ -80,14 +91,19 @@ public class Car {
         this.color = color;
     }
 
-    @Override
-    public String toString() {
-        return "Car{" +
-                "id=" + id +
-                ", make='" + make + '\'' +
-                ", model='" + model + '\'' +
-                ", year='" + year + '\'' +
-                ", color='" + color + '\'' +
-                '}';
+    public Set<Driver> getDrivers() {
+        return drivers;
+    }
+
+    public void setDrivers(Set<Driver> drivers) {
+        this.drivers = drivers;
+    }
+
+    public Dealership getDealership() {
+        return dealership;
+    }
+
+    public void setDealership(Dealership dealership) {
+        this.dealership = dealership;
     }
 }

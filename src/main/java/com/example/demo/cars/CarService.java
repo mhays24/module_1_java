@@ -43,27 +43,11 @@ public class CarService {
 
     @Transactional
     public void updateCar(Long carId,
-                                   String make,
-                                   String model) {
+                                   Car updatedCar) {
         Car car = carRepository.findById(carId)
                 .orElseThrow(() -> new IllegalStateException(
                         "student with id " + carId + " does not exist"));
-        if (make != null &&
-                make.length() > 0 &&
-                !Objects.equals(car.getMake(), make)) {
-            car.setMake(make);
-        }
-
-        if (make != null &&
-                make.length() > 0 &&
-                !Objects.equals(car.getMake(), make)) {
-            Optional<Car> carOptional = carRepository
-                    .findsCarByColor(make);
-            if (carOptional.isPresent()) {
-                throw new IllegalStateException("make taken");
-            }
-            car.setMake(make);
-        }
+        updatedCar.setId(carId);
     }
 
     public Optional<Car> findCar(Long carId) {
